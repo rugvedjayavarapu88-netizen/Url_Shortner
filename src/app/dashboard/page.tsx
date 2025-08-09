@@ -1,16 +1,21 @@
 // Server component
 import { prisma } from "@/lib/db";
 import Nextlink from "next/link";
-import type { Link as LinkModel } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
+
+// Describe the shape we're selecting from the DB:
+type LinkRow = Prisma.LinkGetPayload<{
+  select: { id: true; slug: true; longUrl: true; createdAt: true };
+}>;
 
 export default async function Dashboard() {
-  const links:LinkModel[] = await prisma.link.findMany({
+  const links:LinkRow[] = await prisma.link.findMany({
     orderBy: { createdAt: "desc" },
     take: 50,
   });
 
   const rows = await Promise.all(
-    links.map(async (l:LinkModel) => {
+    links.map(async (l:LinkRow) => {
       const totalClicks = await prisma.click.count({ where: { linkId: l.id } });
       const last = await prisma.click.findFirst({
         where: { linkId: l.id },
