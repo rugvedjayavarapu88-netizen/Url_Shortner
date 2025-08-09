@@ -1,15 +1,16 @@
 // Server component
 import { prisma } from "@/lib/db";
-import Link from "next/link";
+import Nextlink from "next/link";
+import type { Link as LinkModel } from "@prisma/client";
 
 export default async function Dashboard() {
-  const links = await prisma.link.findMany({
+  const links:LinkModel[] = await prisma.link.findMany({
     orderBy: { createdAt: "desc" },
     take: 50,
   });
 
   const rows = await Promise.all(
-    links.map(async (l) => {
+    links.map(async (l:LinkModel) => {
       const totalClicks = await prisma.click.count({ where: { linkId: l.id } });
       const last = await prisma.click.findFirst({
         where: { linkId: l.id },
@@ -31,7 +32,7 @@ export default async function Dashboard() {
     <main style={{ padding: 24, maxWidth: 960, margin: "0 auto" }}>
       <h2>Your Links</h2>
       <p>
-        <Link href="/">← Create another link</Link>
+        <Nextlink href="/">← Create another link</Nextlink>
       </p>
       <table border={1} cellPadding={6} style={{ borderCollapse: "collapse", width: "100%" }}>
         <thead>
