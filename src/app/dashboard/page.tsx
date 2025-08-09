@@ -1,5 +1,6 @@
 // Server component
 import { prisma } from "@/lib/db";
+import Link from "next/link";
 
 export default async function Dashboard() {
   const links = await prisma.link.findMany({
@@ -30,7 +31,7 @@ export default async function Dashboard() {
     <main style={{ padding: 24, maxWidth: 960, margin: "0 auto" }}>
       <h2>Your Links</h2>
       <p>
-        <a href="/">← Create another link</a>
+        <Link href="/">← Create another link</Link>
       </p>
       <table border={1} cellPadding={6} style={{ borderCollapse: "collapse", width: "100%" }}>
         <thead>

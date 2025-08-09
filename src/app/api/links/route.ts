@@ -6,6 +6,13 @@ import { randSlug } from "@/lib/slug";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+
+    const parsed = createLinkInput.safeParse(body);
+    if (!parsed.success) {
+      const msg = parsed.error.issues[0]?.message ?? "Invalid input";
+      return NextResponse.json({ error: msg }, { status: 400 });
+    }
+
     const { longUrl, slug } = createLinkInput.parse(body);
     const finalSlug = slug ?? (await uniqueSlug());
 
@@ -15,8 +22,8 @@ export async function POST(req: NextRequest) {
       { id: link.id, slug: finalSlug, shortUrl: `/${finalSlug}` },
       { status: 201 }
     );
-  } catch (err: any) {
-    const message = err?.issues?.[0]?.message ?? err?.message ?? "Bad Request";
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Bad Request";
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }

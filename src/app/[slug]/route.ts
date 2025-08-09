@@ -6,9 +6,9 @@ import crypto from "crypto";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { slug: string } }
-) {
-  const slug = params.slug;
+  { params }: { params: Promise<{ slug: string }> }
+): Promise<NextResponse> {
+  const { slug } = await params;
   const link = await prisma.link.findUnique({ where: { slug } });
 
   if (!link) {

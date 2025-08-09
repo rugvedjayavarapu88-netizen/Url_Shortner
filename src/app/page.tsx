@@ -20,11 +20,11 @@ export default function Home() {
       const j = await res.json();
       if (res.ok) setShortUrl(`${location.origin}/${j.slug}`);
       else setErr(j.error || "Something went wrong");
-    } catch (e: any) {
-      setErr(e?.message ?? "Network error");
-    } finally {
-      setLoading(false);
-    }
+    } catch (e: unknown) {
+    setErr(e instanceof Error ? e.message : "Network error");
+  } finally {
+    setLoading(false);
+  }
   }
 
   return (
